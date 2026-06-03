@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ITIL 4 Foundation — Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ITIL 4 Foundation Practice — stylesheet
+   Accent: cyan-blue #00b4d8 (UI only)
+   Green reserved EXCLUSIVELY for "correct"; red for "wrong".
+   ============================================================ */
+:root{
+  --bg:        #0b0f14;
+  --bg2:       #11161d;
+  --bg3:       #161d27;
+  --bg-hover:  #1b2530;
+  --border:    #232d3a;
+  --border2:   #2d3a4a;
+
+  --accent:    #00b4d8;   /* cyan-blue */
+  --accent-dim:#0a7fa0;
+  --accent-bg: rgba(0,180,216,.10);
+
+  --text:      #e6edf3;
+  --text2:     #aeb9c5;
+  --muted:     #6b7785;
+
+  --correct:   #3fb950;
+  --correct-bg:rgba(63,185,80,.10);
+  --wrong:     #f0506e;
+  --wrong-bg:  rgba(240,80,110,.10);
+  --warn:      #e3b341;
+
+  /* topic colours — cool palette, none green/cyan to avoid clashes */
+  --kc:  #c98bff;   /* violet  */
+  --gp:  #f59e6b;   /* amber/orange */
+  --4d:  #6ea8fe;   /* blue    */
+  --svs: #f7768e;   /* rose    */
+  --pr:  #e0af68;   /* gold    */
+
+  --mono:'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --sans:'IBM Plex Sans', system-ui, -apple-system, sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  background:
+    radial-gradient(1200px 600px at 80% -10%, rgba(0,180,216,.06), transparent 60%),
+    var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+
+.wrap{
+  max-width:820px;
+  margin:0 auto;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  padding:0 16px;
+}
+
+/* ── Masthead ─────────────────────────────────────────────── */
+.masthead{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:13px;
+  padding:16px 4px 14px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:22px;
+}
+.dot{width:11px;height:11px;border-radius:50%}
+.d1{background:#f0506e}.d2{background:#e3b341}.d3{background:var(--accent)}
+.masthead .title{margin-left:6px;color:var(--text2)}
+.masthead .title b{color:var(--accent);font-weight:700}
+.masthead .right{margin-left:auto;color:var(--muted);font-size:12px}
+.cursor{display:inline-block;width:8px;height:15px;background:var(--accent);
+  margin-left:2px;animation:blink 1.1s steps(1) infinite;vertical-align:-2px}
+@keyframes blink{50%{opacity:0}}
+
+main{flex:1}
+
+/* ── Cards / panels ───────────────────────────────────────── */
+.card{
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:26px 24px;
+}
+.panel{
+  background:var(--bg3);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:18px;
+}
+
+h2.screen-title{
+  font-family:var(--mono);font-size:18px;font-weight:700;
+  letter-spacing:.01em;margin-bottom:4px;
+}
+.sub{color:var(--muted);font-size:13px;font-family:var(--mono);margin-bottom:22px}
+
+/* ── Config screen ────────────────────────────────────────── */
+.section-h{
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);
+  margin:22px 0 11px;display:flex;align-items:center;gap:8px;
+}
+.section-h::before{content:"";width:14px;height:1px;background:var(--accent)}
+
+.modes{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.mode{
+  border:1px solid var(--border2);border-radius:8px;
+  padding:14px 14px;cursor:pointer;background:var(--bg3);
+  transition:border-color .15s, background .15s, transform .05s;
+}
+.mode:hover{border-color:var(--accent-dim);background:var(--bg-hover)}
+.mode.sel{border-color:var(--accent);background:var(--accent-bg);
+  box-shadow:0 0 0 1px var(--accent) inset}
+.mode .mname{font-family:var(--mono);font-weight:700;font-size:14px;color:var(--text)}
+.mode.sel .mname{color:var(--accent)}
+.mode .mdesc{font-size:12px;color:var(--text2);margin-top:6px;line-height:1.4}
+
+.toggles{display:flex;flex-wrap:wrap;gap:8px}
+.toggle{
+  display:flex;align-items:center;gap:8px;
+  border:1px solid var(--border2);border-radius:20px;
+  padding:7px 14px 7px 11px;cursor:pointer;font-size:13px;
+  font-family:var(--mono);user-select:none;background:var(--bg3);
+  transition:border-color .15s,opacity .15s;
+}
+.toggle .swatch{width:9px;height:9px;border-radius:50%}
+.toggle.off{opacity:.4}
+.toggle.off .check{visibility:hidden}
+.toggle .check{color:var(--accent);font-weight:700}
+.toggle:hover{border-color:var(--accent-dim)}
+.toggle.locked{opacity:.5;cursor:not-allowed}
+
+.lengths{display:flex;gap:8px;flex-wrap:wrap}
+.len{
+  font-family:var(--mono);font-size:13px;
+  border:1px solid var(--border2);border-radius:7px;
+  padding:9px 16px;cursor:pointer;background:var(--bg3);
+  transition:border-color .15s,background .15s;
+}
+.len:hover{border-color:var(--accent-dim)}
+.len.sel{border-color:var(--accent);background:var(--accent-bg);color:var(--accent)}
+.len.disabled{opacity:.35;cursor:not-allowed}
+
+.note{
+  font-size:12px;color:var(--text2);margin-top:12px;
+  border-left:2px solid var(--accent);padding:8px 0 8px 12px;
+  background:var(--accent-bg);border-radius:0 6px 6px 0;
+}
+
+/* ── Buttons ──────────────────────────────────────────────── */
+.btn{
+  font-family:var(--mono);font-size:14px;font-weight:600;letter-spacing:.03em;
+  border:none;border-radius:8px;padding:13px 26px;cursor:pointer;
+  transition:filter .15s,transform .05s;
+}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:#04222b}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border2)}
+.btn-ghost:hover{border-color:var(--accent-dim);color:var(--text)}
+.btn-row{display:flex;gap:12px;align-items:center;margin-top:26px;flex-wrap:wrap}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* ── Quiz HUD ─────────────────────────────────────────────── */
+.hud{
+  display:flex;align-items:center;gap:16px;
+  font-family:var(--mono);font-size:12.5px;color:var(--text2);
+  margin-bottom:10px;flex-wrap:wrap;
+}
+.hud .item{display:flex;align-items:center;gap:6px}
+.hud .lbl{color:var(--muted)}
+.hud .val{color:var(--text);font-weight:600}
+.hud .val.accent{color:var(--accent)}
+.hud .timer.danger{color:var(--wrong);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.55}}
+.hud .right{margin-left:auto}
+
+.progress-wrap{height:4px;background:var(--border);border-radius:3px;
+  overflow:hidden;margin-bottom:20px}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;
+  transition:width .35s ease;width:0%}
+
+/* ── Question ─────────────────────────────────────────────── */
+.q-tags{display:flex;gap:8px;margin-bottom:13px;flex-wrap:wrap}
+.tag{
+  font-family:var(--mono);font-size:10px;letter-spacing:.06em;
+  text-transform:uppercase;padding:3px 9px;border-radius:4px;
+  border:1px solid;
+}
+.tag.diff{color:var(--muted);border-color:var(--border2)}
+
+.q-text{font-size:17px;line-height:1.6;margin-bottom:20px;color:var(--text)}
+
+/* flag-for-review button */
+.flagbtn{
+  margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--mono);font-size:11px;letter-spacing:.04em;
+  border:1px solid var(--border2);border-radius:5px;
+  padding:3px 10px;cursor:pointer;background:var(--bg3);color:var(--muted);
+  transition:border-color .12s,color .12s,background .12s;
+}
+.flagbtn .fico{font-size:12px;line-height:1}
+.flagbtn:hover{border-color:var(--warn);color:var(--warn)}
+.flagbtn.on{border-color:var(--warn);color:var(--warn);background:rgba(227,179,65,.12)}
+.flagbtn.on .fico{color:var(--warn)}
+.flagged-btn{display:inline-flex;align-items:center;gap:6px}
+
+.options{display:flex;flex-direction:column;gap:9px}
+.opt{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:13px 15px;border-radius:8px;
+  border:1px solid var(--border2);background:var(--bg3);
+  cursor:pointer;font-size:14.5px;text-align:left;width:100%;
+  color:var(--text);font-family:var(--sans);
+  transition:border-color .12s,background .12s;
+}
+.opt:hover:not(.locked){border-color:var(--accent-dim);background:var(--bg-hover)}
+.opt .key{
+  font-family:var(--mono);font-size:12px;font-weight:700;color:var(--muted);
+  min-width:20px;border:1px solid var(--border2);border-radius:4px;
+  text-align:center;padding:1px 0;line-height:1.5;flex-shrink:0;
+}
+.opt .mark{margin-left:auto;font-weight:700;font-size:16px;flex-shrink:0;visibility:hidden}
+
+.opt.correct{border-color:var(--correct);background:var(--correct-bg)}
+.opt.correct .key{border-color:var(--correct);color:var(--correct)}
+.opt.correct .mark{visibility:visible;color:var(--correct)}
+.opt.wrong{border-color:var(--wrong);background:var(--wrong-bg)}
+.opt.wrong .key{border-color:var(--wrong);color:var(--wrong)}
+.opt.wrong .mark{visibility:visible;color:var(--wrong)}
+.opt.locked{cursor:default}
+.opt.picked-exam{border-color:var(--accent);background:var(--accent-bg)}
+.opt.picked-exam .key{border-color:var(--accent);color:var(--accent)}
+
+/* explanation (study/drill) */
+.explain{
+  margin-top:16px;border-radius:8px;padding:14px 16px;font-size:14px;
+  border:1px solid var(--border2);background:var(--bg3);
+  border-left:3px solid var(--accent);line-height:1.55;
+}
+.explain .verdict{font-family:var(--mono);font-weight:700;font-size:12px;
+  letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;display:block}
+.explain.ok{border-left-color:var(--correct)}
+.explain.ok .verdict{color:var(--correct)}
+.explain.no{border-left-color:var(--wrong)}
+.explain.no .verdict{color:var(--wrong)}
+
+.q-foot{display:flex;align-items:center;gap:12px;margin-top:20px;flex-wrap:wrap}
+.hint{font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-left:auto}
+kbd{font-family:var(--mono);font-size:11px;background:var(--bg);
+  border:1px solid var(--border2);border-bottom-width:2px;border-radius:4px;
+  padding:1px 6px;color:var(--text2)}
+
+/* ── Results ──────────────────────────────────────────────── */
+.verdict-banner{
+  text-align:center;padding:26px 18px;border-radius:10px;margin-bottom:22px;
+  border:1px solid;
+}
+.verdict-banner.pass{border-color:var(--correct);background:var(--correct-bg)}
+.verdict-banner.fail{border-color:var(--wrong);background:var(--wrong-bg)}
+.verdict-banner .big{font-family:var(--mono);font-size:13px;letter-spacing:.16em;
+  text-transform:uppercase;margin-bottom:10px}
+.verdict-banner.pass .big{color:var(--correct)}
+.verdict-banner.fail .big{color:var(--wrong)}
+.bigscore{font-family:var(--mono);font-size:52px;font-weight:700;line-height:1}
+.scoreline{color:var(--text2);font-family:var(--mono);font-size:13px;margin-top:8px}
+
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:8px}
+.stat{background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:14px;text-align:center}
+.stat .n{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--accent)}
+.stat .l{font-size:11px;color:var(--muted);font-family:var(--mono);
+  text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+
+.tbreak{display:flex;flex-direction:column;gap:11px;margin-top:6px}
+.trow{display:flex;align-items:center;gap:12px;font-size:13px}
+.trow .tname{font-family:var(--mono);min-width:150px;display:flex;align-items:center;gap:7px}
+.trow .tswatch{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tbar{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden}
+.tbar .fill{height:100%;border-radius:4px;transition:width .5s ease}
+.trow .tnum{font-family:var(--mono);color:var(--text2);min-width:64px;text-align:right;font-size:12.5px}
+
+.weak{margin-top:16px;font-size:13.5px;border-radius:8px;padding:13px 15px;
+  border:1px solid var(--warn);background:rgba(227,179,65,.08);
+  border-left:3px solid var(--warn)}
+.weak b{color:var(--warn)}
+
+/* ── Review ───────────────────────────────────────────────── */
+.review-controls{display:flex;gap:8px;margin:8px 0 18px;flex-wrap:wrap}
+.rev-item{border:1px solid var(--border);border-radius:8px;padding:15px 16px;
+  margin-bottom:11px;background:var(--bg3)}
+.rev-q{font-size:14.5px;margin:7px 0 11px;line-height:1.5}
+.rev-opt{font-size:13px;padding:7px 11px;border-radius:6px;margin-bottom:5px;
+  display:flex;gap:9px;align-items:flex-start;border:1px solid transparent}
+.rev-opt .rk{font-family:var(--mono);font-size:11px;color:var(--muted);min-width:16px}
+.rev-opt.c{background:var(--correct-bg);border-color:var(--correct)}
+.rev-opt.c .rk{color:var(--correct)}
+.rev-opt.w{background:var(--wrong-bg);border-color:var(--wrong)}
+.rev-opt.w .rk{color:var(--wrong)}
+.rev-exp{font-size:12.5px;color:var(--text2);margin-top:9px;
+  border-left:2px solid var(--border2);padding-left:11px;line-height:1.5}
+
+/* ── Footer ───────────────────────────────────────────────── */
+.foot{
+  font-family:var(--mono);font-size:11px;color:var(--muted);
+  text-align:center;padding:26px 8px 22px;margin-top:24px;
+  border-top:1px solid var(--border);line-height:1.7;
+}
+.foot a{color:var(--accent-dim);text-decoration:none}
+.foot a:hover{color:var(--accent);text-decoration:underline}
+
+/* ── Responsive ───────────────────────────────────────────── */
+@media (max-width:620px){
+  .modes{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr 1fr}
+  .card{padding:20px 16px}
+  .q-text{font-size:16px}
+  .bigscore{font-size:42px}
+  .trow .tname{min-width:120px;font-size:12px}
+  .masthead .right{display:none}
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <span class="dot d1"></span><span class="dot d2"></span><span class="dot d3"></span>
+    <span class="title"><b>itil4-foundation</b> &mdash; practice console<span class="cursor"></span></span>
+    <span class="right">120-question bank &middot; randomized</span>
+  </header>
+  <main id="app"></main>
+  <footer class="foot">
+    Independent study aid for the ITIL&reg; 4 Foundation syllabus &middot; questions are original, written to the published syllabus concepts.<br>
+    ITIL&reg; is a registered trade mark of <a href="https://www.peoplecert.org/" target="_blank" rel="noopener">PeopleCert</a> / AXELOS. This tool is not affiliated with, endorsed by, or sponsored by PeopleCert or AXELOS.<br>
+    Single self-contained file &middot; offline-ready &middot; no data leaves your browser.
+  </footer>
+</div>
+<script>
+const QUESTIONS = [{"id":1,"topic":"kc","diff":"recall","q":"What is the ITIL 4 definition of a service?","opts":["A means of enabling value co-creation by facilitating outcomes that customers want to achieve, without the customer having to manage specific costs and risks","A configuration of resources owned and operated solely by the service provider","Any unit of work performed by an IT department in exchange for payment","A formal agreement that defines the targets and responsibilities between two parties"],"a":0,"exp":"A service enables value co-creation by facilitating outcomes the customer wants, while the provider takes on the associated costs and risks the customer would otherwise have to manage."},{"id":2,"topic":"kc","diff":"recall","q":"In ITIL 4, value is best described as which of the following?","opts":["The total cost of delivering a service over its lifetime","The perceived benefits, usefulness, and importance of something","The list of features included in a service offering","The revenue a service provider earns from a service"],"a":1,"exp":"Value is the perceived benefits, usefulness, and importance of something. It is subjective and is co-created between the provider and the consumer."},{"id":3,"topic":"kc","diff":"application","q":"A customer cares about whether a service is available when needed, performs securely, and has enough capacity. Which characteristic do these concerns describe?","opts":["Utility","Warranty","Output","Cost"],"a":1,"exp":"Warranty is 'fitness for use' — the assurance that a product or service will meet agreed requirements. It typically covers availability, capacity, security, and continuity."},{"id":4,"topic":"kc","diff":"recall","q":"Utility refers to which of the following?","opts":["How a service performs against agreed targets","Fitness for use","Fitness for purpose — what the service does","The assurance of availability and continuity"],"a":2,"exp":"Utility is 'fitness for purpose' — the functionality offered to meet a particular need; essentially what the service does. Warranty is fitness for use (how it performs)."},{"id":5,"topic":"kc","diff":"recall","q":"For a service to deliver value, which statement is correct?","opts":["Utility alone is sufficient","Warranty alone is sufficient","Both utility and warranty are required","Neither utility nor warranty is required if cost is low"],"a":2,"exp":"A service must have both utility (fit for purpose) and warranty (fit for use) to enable value. A high-utility service that performs poorly, or a reliable service that does nothing useful, delivers no value."},{"id":6,"topic":"kc","diff":"recall","q":"What is an outcome in ITIL 4?","opts":["A tangible or intangible deliverable of an activity","A result for a stakeholder enabled by one or more outputs","The money spent on a specific activity","A possible event that could cause harm"],"a":1,"exp":"An outcome is a result for a stakeholder, enabled by one or more outputs. An output is the deliverable of an activity; the outcome is the value that output enables."},{"id":7,"topic":"kc","diff":"application","q":"A photo-printing service produces printed photographs. The customer's holiday memories are preserved in physical form. Which of these is the OUTCOME?","opts":["The printed photographs","The preservation of holiday memories","The printer hardware","The ink and paper consumed"],"a":1,"exp":"The printed photos are the output (the deliverable). The outcome is the result the customer values — their memories preserved. Outputs enable outcomes."},{"id":8,"topic":"kc","diff":"recall","q":"In ITIL 4, how is a 'cost' defined?","opts":["The perceived value of a service to the consumer","The amount of money spent on a specific activity or resource","A possible event that could cause loss","The agreed level of service performance"],"a":1,"exp":"Cost is the amount of money spent on a specific activity or resource. From the consumer's view, services remove some costs (costs removed) but may impose new ones (costs imposed)."},{"id":9,"topic":"kc","diff":"recall","q":"Which statement best defines 'risk' in ITIL 4?","opts":["A confirmed failure of a service","A possible event that could cause harm or loss, or make it more difficult to achieve objectives","The cost imposed on a consumer by a service","The difference between utility and warranty"],"a":1,"exp":"Risk is a possible event that could cause harm or loss, or make it more difficult to achieve objectives. Services can remove risk from a consumer but may also impose new risks."},{"id":10,"topic":"kc","diff":"recall","q":"Which roles are recognised as types of service consumer in ITIL 4?","opts":["Customer, user, and sponsor","Provider, partner, and supplier","Manager, analyst, and engineer","Owner, operator, and auditor"],"a":0,"exp":"The service consumer is a generic role covering three more specific roles: customer (defines requirements and accepts responsibility for outcomes), user (uses the service), and sponsor (authorises the budget)."},{"id":11,"topic":"kc","diff":"application","q":"In an organisation, one person defines the service requirements, another authorises the budget, and many staff use the service daily. Which role authorises the budget?","opts":["Customer","User","Sponsor","Provider"],"a":2,"exp":"The sponsor is the role that authorises the budget for service consumption. The customer defines requirements; users use the service."},{"id":12,"topic":"kc","diff":"recall","q":"What is a service offering?","opts":["A formal request submitted by a user","A description of one or more services designed to address the needs of a target consumer group","The configuration of resources the provider owns","An unplanned interruption to a service"],"a":1,"exp":"A service offering is a formal description of one or more services, designed to address the needs of a target consumer group. It may include goods, access to resources, and service actions."},{"id":13,"topic":"kc","diff":"recall","q":"Which of the following may be included in a service offering?","opts":["Only goods that are transferred to the consumer","Goods, access to resources, and service actions","Only the service actions performed by the provider","Only the resources owned by the provider"],"a":1,"exp":"A service offering can include goods (ownership transferred), access to resources (granted under agreed terms), and service actions (performed to address consumer needs)."},{"id":14,"topic":"kc","diff":"recall","q":"What is a product in ITIL 4?","opts":["A configuration of an organisation's resources designed to offer value for a consumer","A single tangible item sold to a customer","The same thing as a service offering","A deliverable transferred to the consumer"],"a":0,"exp":"A product is a configuration of an organisation's resources designed to offer value for a consumer. Products are typically not consumed directly; they form the basis of one or more service offerings."},{"id":15,"topic":"kc","diff":"recall","q":"Service relationship management refers to which of the following?","opts":["Managing only the technical interfaces between systems","Joint activities performed by a provider and a consumer to ensure continual value co-creation","The provision of resources by suppliers only","The act of consuming services exclusively"],"a":1,"exp":"A service relationship comprises service provision, service consumption, and service relationship management — the joint activities a provider and consumer perform to ensure continual value co-creation based on agreed service offerings."},{"id":16,"topic":"kc","diff":"application","q":"Value co-creation in ITIL 4 implies which of the following?","opts":["The provider creates all value and delivers it to a passive consumer","Value is created jointly through active collaboration between provider and consumer","The consumer creates value independently of the provider","Value is fixed and identical for every consumer"],"a":1,"exp":"ITIL 4 emphasises that value is co-created. The consumer is not a passive recipient; they contribute to value creation through collaboration, feedback, and use of the service."},{"id":17,"topic":"kc","diff":"recall","q":"From the service consumer's perspective, which two cost dimensions does a service involve?","opts":["Fixed costs and variable costs","Costs removed and costs imposed","Capital costs and operational costs","Direct costs and indirect costs"],"a":1,"exp":"A service can remove costs from the consumer (costs removed, part of the value proposition) but may also introduce new costs (costs imposed) that the consumer did not have before."},{"id":18,"topic":"kc","diff":"recall","q":"From the consumer's perspective, services affect risk in which two ways?","opts":["Risks created and risks destroyed","Risks removed and risks imposed","Risks accepted and risks transferred","Risks measured and risks ignored"],"a":1,"exp":"Services can remove risk from a consumer (risks removed) but can also impose new risks (risks imposed), such as a security breach at the provider. Both must be considered when assessing value."},{"id":19,"topic":"kc","diff":"recall","q":"Which statement about outputs and outcomes is correct?","opts":["Outputs and outcomes are the same thing","An outcome enables one or more outputs","An output enables one or more outcomes","Outputs are always intangible and outcomes always tangible"],"a":2,"exp":"Outputs (deliverables of activities) enable outcomes (results valued by stakeholders). A single outcome may depend on multiple outputs."},{"id":20,"topic":"kc","diff":"application","q":"An organisation provides a fleet of vehicles plus maintenance, so the customer can move goods without owning or maintaining the trucks. Which ITIL concept does removing the customer's need to manage maintenance costs and risks illustrate?","opts":["Utility only","The essence of a service (facilitating outcomes without the customer managing specific costs and risks)","An output","A guiding principle"],"a":1,"exp":"This is the core of the service definition: enabling the customer's desired outcome (moving goods) while the provider absorbs the specific costs and risks (vehicle maintenance) the customer would otherwise manage."},{"id":21,"topic":"kc","diff":"recall","q":"Who is responsible for defining the requirements for a service and taking responsibility for the outcomes of service consumption?","opts":["The user","The sponsor","The customer","The supplier"],"a":2,"exp":"The customer is the role that defines the requirements for a service and takes responsibility for the outcomes of consuming it."},{"id":22,"topic":"kc","diff":"recall","q":"A single person in a small business might act as customer, user, and sponsor at once. What does this illustrate?","opts":["That these roles cannot coexist","That the consumer roles are distinct but can be held by the same person or group","That the organisation lacks proper governance","That service relationships are unnecessary"],"a":1,"exp":"The consumer roles (customer, user, sponsor) are conceptually distinct, but in practice one person or group may hold several of them simultaneously, especially in small organisations."},{"id":23,"topic":"gp","diff":"recall","q":"How many guiding principles are defined in ITIL 4?","opts":["Four","Five","Seven","Nine"],"a":2,"exp":"ITIL 4 defines seven guiding principles: focus on value; start where you are; progress iteratively with feedback; collaborate and promote visibility; think and work holistically; keep it simple and practical; and optimise and automate."},{"id":24,"topic":"gp","diff":"recall","q":"What is a guiding principle in ITIL 4?","opts":["A mandatory rule that must never be broken","A recommendation that guides an organisation in all circumstances, regardless of changes in goals, strategies, or structure","A step in the service value chain","A type of management practice"],"a":1,"exp":"A guiding principle is a recommendation that can guide an organisation in all circumstances, regardless of changes in its goals, strategies, type of work, or management structure. They are universal and enduring."},{"id":25,"topic":"gp","diff":"application","q":"A team wants to add a brand-new tool for every minor task, ignoring the capabilities they already have. Which guiding principle are they most clearly neglecting?","opts":["Focus on value","Start where you are","Optimise and automate","Collaborate and promote visibility"],"a":1,"exp":"'Start where you are' advises assessing and reusing what already exists rather than starting from scratch. Existing services, processes, and tools should be measured and reused where possible."},{"id":26,"topic":"gp","diff":"recall","q":"Which guiding principle recommends doing work in small, manageable iterations that can be evaluated and adjusted?","opts":["Keep it simple and practical","Progress iteratively with feedback","Think and work holistically","Focus on value"],"a":1,"exp":"'Progress iteratively with feedback' advises organising work into smaller, manageable sections that can be executed and completed in a timely manner, using feedback before, during, and after each iteration."},{"id":27,"topic":"gp","diff":"application","q":"Before, during, and after each stage of an improvement, a team gathers input from stakeholders to course-correct. This best demonstrates which principle?","opts":["Optimise and automate","Progress iteratively with feedback","Keep it simple and practical","Start where you are"],"a":1,"exp":"Seeking and using feedback throughout the work — before, during, and after — is central to 'progress iteratively with feedback'. Feedback loops improve responsiveness and reduce risk."},{"id":28,"topic":"gp","diff":"recall","q":"Which guiding principle emphasises that working together across boundaries produces better results and that the right information should be shared?","opts":["Collaborate and promote visibility","Think and work holistically","Focus on value","Keep it simple and practical"],"a":0,"exp":"'Collaborate and promote visibility' stresses that working together and making work and its consequences visible builds trust and produces better outcomes. Hidden work (work in the dark) leads to poor decisions."},{"id":29,"topic":"gp","diff":"recall","q":"The principle 'think and work holistically' advises which of the following?","opts":["Optimise each component in isolation for maximum efficiency","No service, practice, or element stands alone; the organisation must consider the whole and how parts work together","Always select the simplest possible solution","Begin every initiative by reusing existing assets"],"a":1,"exp":"'Think and work holistically' recognises that services and their elements are an integrated system. The whole works only when the parts work together; optimising one part in isolation can harm the whole."},{"id":30,"topic":"gp","diff":"application","q":"A process has grown to 30 steps, many adding no value, and staff routinely skip them. Which principle most directly addresses fixing this?","opts":["Optimise and automate","Keep it simple and practical","Collaborate and promote visibility","Start where you are"],"a":1,"exp":"'Keep it simple and practical' advises eliminating steps that don't contribute to value. Use the minimum number of steps to accomplish an objective; outcome-based thinking removes unnecessary complexity."},{"id":31,"topic":"gp","diff":"recall","q":"Which guiding principle advises making the best use of resources first, and only then using technology to do work that does not need human intervention?","opts":["Optimise and automate","Progress iteratively with feedback","Focus on value","Think and work holistically"],"a":0,"exp":"'Optimise and automate' recommends optimising work (making it as effective and useful as possible) before automating it. Automating an inefficient process simply makes the inefficiency faster."},{"id":32,"topic":"gp","diff":"application","q":"A manager wants to automate a messy, poorly understood approval process immediately to save time. According to 'optimise and automate', what should happen first?","opts":["Automate it as-is to get quick wins","Optimise the process before automating it","Outsource the process to a supplier","Remove the approval entirely"],"a":1,"exp":"The principle is 'optimise AND automate', in that order. You should optimise the process first; automating a broken process just makes the problems happen faster and at scale."},{"id":33,"topic":"gp","diff":"recall","q":"Which guiding principle should underpin everything the organisation does and is considered central to the others?","opts":["Optimise and automate","Focus on value","Keep it simple and practical","Start where you are"],"a":1,"exp":"'Focus on value' is the central principle — everything the organisation does should map, directly or indirectly, to value for stakeholders. It informs the application of all the other principles."},{"id":34,"topic":"gp","diff":"application","q":"To 'focus on value', what is an essential first step a team should take?","opts":["Reduce all costs to a minimum","Know who is being served and understand their perspective of value","Automate as many activities as possible","Document every existing process in detail"],"a":1,"exp":"Focusing on value starts with knowing who is being served and understanding their perspective of value — including the consumer's experience and desired outcomes — so work can be directed accordingly."},{"id":35,"topic":"gp","diff":"recall","q":"When applying 'start where you are', what should an organisation do with existing services and processes?","opts":["Discard them and rebuild from a clean slate","Assess them — measure directly where possible rather than relying on assumptions","Automate them immediately","Hide them from stakeholders to avoid blame"],"a":1,"exp":"'Start where you are' advises assessing the current state objectively. Decisions should be based on accurate, directly observed measurement wherever possible, not on assumptions or anecdote."},{"id":36,"topic":"gp","diff":"application","q":"A project team builds a huge solution over 18 months with no stakeholder checkpoints, then discovers the requirements changed long ago. Which TWO principles were most clearly violated?","opts":["Focus on value and keep it simple","Progress iteratively with feedback and collaborate and promote visibility","Optimise and automate and start where you are","Think and work holistically and keep it simple"],"a":1,"exp":"The lack of checkpoints violates 'progress iteratively with feedback'; the absence of stakeholder involvement and visibility violates 'collaborate and promote visibility'. Both would have surfaced the changed requirements early."},{"id":37,"topic":"gp","diff":"recall","q":"Which statement about applying the guiding principles is correct?","opts":["Each principle should be applied in isolation","Organisations should review which principles apply and consider how they interact","Only one principle should be chosen and used permanently","The principles override governance and practices"],"a":1,"exp":"Organisations should not use all principles equally in every situation. They should review each, decide how relevant it is, and consider how the principles reinforce and depend on one another."},{"id":38,"topic":"gp","diff":"application","q":"Sharing dashboards so everyone can see the status and impact of work, building trust between teams, best reflects which principle?","opts":["Keep it simple and practical","Collaborate and promote visibility","Optimise and automate","Focus on value"],"a":1,"exp":"Making work and its consequences visible (the 'promote visibility' half) supports better decision-making and builds trust, a key aspect of 'collaborate and promote visibility'."},{"id":39,"topic":"gp","diff":"recall","q":"'Keep it simple and practical' advises that if a process, service, or metric provides no value, what should be done?","opts":["Automate it","Hide it from auditors","Eliminate it","Add more steps to make it useful"],"a":2,"exp":"The principle advises eliminating anything that fails to provide value or produce a useful outcome. Use the minimum number of steps needed and avoid over-engineering solutions."},{"id":40,"topic":"gp","diff":"application","q":"A new automation initiative ignores how the change will affect upstream and downstream teams and systems. Which principle is being overlooked?","opts":["Start where you are","Think and work holistically","Focus on value","Progress iteratively with feedback"],"a":1,"exp":"Ignoring the wider impact across interconnected teams and systems neglects 'think and work holistically', which requires considering the organisation as an integrated whole rather than optimising parts in isolation."},{"id":41,"topic":"gp","diff":"recall","q":"Which is NOT one of the seven ITIL 4 guiding principles?","opts":["Focus on value","Design for the customer","Keep it simple and practical","Optimise and automate"],"a":1,"exp":"'Design for the customer' is not a guiding principle. The seven are: focus on value; start where you are; progress iteratively with feedback; collaborate and promote visibility; think and work holistically; keep it simple and practical; optimise and automate."},{"id":42,"topic":"gp","diff":"recall","q":"What does the guiding principle 'progress iteratively with feedback' say about large initiatives?","opts":["They should be completed in one large effort to maintain momentum","They are better organised into smaller, manageable iterations","They should never use feedback until completion","They should be automated before they begin"],"a":1,"exp":"Large initiatives are more manageable and less risky when broken into smaller iterations that can be executed and completed in a timely manner, each informed by feedback."},{"id":43,"topic":"gp","diff":"application","q":"An improvement team reuses an existing monitoring tool and the data it already collects rather than buying a new platform. Which principle does this demonstrate?","opts":["Optimise and automate","Start where you are","Keep it simple and practical","Focus on value"],"a":1,"exp":"Reusing existing services, tools, and the data they already produce, rather than building or buying anew, is a direct application of 'start where you are'."},{"id":44,"topic":"gp","diff":"recall","q":"Why does ITIL 4 say automation should follow optimisation?","opts":["Automation is always cheaper than optimisation","Automating an unoptimised process amplifies its inefficiencies","Optimisation is impossible without automation","Automation is only allowed after a year of optimisation"],"a":1,"exp":"If a process is automated before it is optimised, the automation simply makes the existing inefficiencies happen faster and more consistently. Optimise first, then automate what remains."},{"id":45,"topic":"gp","diff":"application","q":"Which action best supports 'focus on value' when reviewing a long-standing report nobody reads?","opts":["Automate the report's generation","Continue producing it for consistency","Stop producing it, as it delivers no value","Add more data to the report"],"a":2,"exp":"If the report delivers no value, focusing on value (reinforced by 'keep it simple and practical') means ceasing the activity rather than perpetuating or automating waste."},{"id":46,"topic":"gp","diff":"recall","q":"The guiding principles are intended to remain relevant under which conditions?","opts":["Only during major transformations","Only when adopting new technology","In all circumstances, regardless of changes to the organisation","Only within the service value chain"],"a":2,"exp":"Guiding principles are universal and enduring recommendations that apply in all circumstances, regardless of changes in goals, strategies, type of work, or management structure."},{"id":47,"topic":"gp","diff":"application","q":"A team holds a daily stand-up where blockers and progress are openly shared with stakeholders. This supports which TWO principles most directly?","opts":["Collaborate and promote visibility; progress iteratively with feedback","Optimise and automate; start where you are","Focus on value; keep it simple and practical","Think and work holistically; optimise and automate"],"a":0,"exp":"Open sharing of progress and blockers promotes visibility and collaboration, while the daily cadence and use of that information to adjust supports iterative progress with feedback."},{"id":48,"topic":"gp","diff":"recall","q":"Which guiding principle warns against 'working in silos' and hoarding information?","opts":["Keep it simple and practical","Collaborate and promote visibility","Optimise and automate","Start where you are"],"a":1,"exp":"'Collaborate and promote visibility' warns that poor collaboration and insufficient visibility (work done in the dark, in silos) lead to flawed decisions and rework."},{"id":49,"topic":"4d","diff":"recall","q":"How many dimensions of service management does ITIL 4 define?","opts":["Three","Four","Five","Seven"],"a":1,"exp":"ITIL 4 defines four dimensions of service management: organisations and people; information and technology; partners and suppliers; and value streams and processes. All four must be considered for holistic value."},{"id":50,"topic":"4d","diff":"recall","q":"Which of the following is one of the four dimensions of service management?","opts":["Governance and compliance","Value streams and processes","Continual improvement","Guiding principles"],"a":1,"exp":"The four dimensions are organisations and people; information and technology; partners and suppliers; and value streams and processes. Governance, continual improvement, and guiding principles are components of the SVS, not dimensions."},{"id":51,"topic":"4d","diff":"application","q":"An organisation has excellent tools but staff lack the skills and clear roles to use them, harming service quality. Which dimension is weakest?","opts":["Information and technology","Organisations and people","Partners and suppliers","Value streams and processes"],"a":1,"exp":"Skills, roles, culture, and organisational structure fall under the 'organisations and people' dimension. Good technology cannot compensate for gaps in this dimension."},{"id":52,"topic":"4d","diff":"recall","q":"Which dimension covers the information and knowledge needed to manage services, as well as the technologies required?","opts":["Organisations and people","Information and technology","Partners and suppliers","Value streams and processes"],"a":1,"exp":"The 'information and technology' dimension includes the information and knowledge needed to deliver services, plus the technologies that support them, and considerations such as security and compliance for that information."},{"id":53,"topic":"4d","diff":"recall","q":"The relationships an organisation has with other organisations involved in the design, deployment, delivery, and support of services fall under which dimension?","opts":["Partners and suppliers","Organisations and people","Value streams and processes","Information and technology"],"a":0,"exp":"The 'partners and suppliers' dimension encompasses an organisation's relationships with other organisations involved in services, including contracts, supplier strategies, and the degree of integration."},{"id":54,"topic":"4d","diff":"recall","q":"Which dimension is concerned with how the various parts of the organisation work in an integrated, coordinated way to enable value through products and services?","opts":["Value streams and processes","Organisations and people","Partners and suppliers","Information and technology"],"a":0,"exp":"The 'value streams and processes' dimension defines the activities, workflows, controls, and procedures needed to achieve agreed objectives — how work is organised to create value."},{"id":55,"topic":"4d","diff":"recall","q":"The four dimensions are affected by external factors often summarised by which model?","opts":["SWOT","PESTLE","RACI","DIKW"],"a":1,"exp":"The PESTLE model (Political, Economic, Social, Technological, Legal, Environmental) describes the external factors that constrain or influence how a service provider works across all four dimensions."},{"id":56,"topic":"4d","diff":"application","q":"A new data-protection law forces an organisation to change how it stores customer data across services. This is an example of which type of factor in the PESTLE model?","opts":["Economic","Social","Legal","Technological"],"a":2,"exp":"A data-protection law is a Legal factor in the PESTLE model — an external constraint the organisation must respond to across its four dimensions."},{"id":57,"topic":"4d","diff":"recall","q":"Why must all four dimensions be considered together?","opts":["Because ITIL certification requires it","Because failing to address all four can leave services less effective or even unviable","Because each dimension replaces a guiding principle","Because they form the service value chain"],"a":1,"exp":"The four dimensions represent perspectives relevant to the whole SVS. Neglecting any one — for example great technology but no skilled people — undermines the effectiveness and viability of services."},{"id":58,"topic":"4d","diff":"application","q":"An organisation reviews its contracts, supplier integration approach, and the goods and services it sources externally. Which dimension is being addressed?","opts":["Partners and suppliers","Organisations and people","Information and technology","Value streams and processes"],"a":0,"exp":"Contracts, supplier strategy, and the sourcing and integration of external goods and services are all part of the 'partners and suppliers' dimension."},{"id":59,"topic":"4d","diff":"recall","q":"Organisational culture and required competencies are part of which dimension?","opts":["Information and technology","Organisations and people","Value streams and processes","Partners and suppliers"],"a":1,"exp":"Culture, leadership, skills, competencies, roles, and organisational structures all belong to the 'organisations and people' dimension."},{"id":60,"topic":"4d","diff":"application","q":"A company decides how much of its service delivery to perform in-house versus source from third parties. Which factor most influences this decision within the partners and suppliers dimension?","opts":["The DIKW hierarchy","The organisation's service integration and sourcing strategy","The continual improvement register","The change schedule"],"a":1,"exp":"Decisions about in-house versus outsourced delivery are shaped by the organisation's sourcing and service integration strategy — core concerns of the partners and suppliers dimension."},{"id":61,"topic":"4d","diff":"recall","q":"Within the information and technology dimension, which consideration is especially important when handling service data?","opts":["The change authority","Security and compliance requirements for the information","The service value chain activities","The number of suppliers"],"a":1,"exp":"The information and technology dimension must account for how information is managed, including security, confidentiality, integrity, availability, and compliance requirements relating to that information."},{"id":62,"topic":"4d","diff":"application","q":"Rising interest rates reduce an organisation's budget for new service investments. In PESTLE terms, this is which kind of factor?","opts":["Political","Economic","Environmental","Technological"],"a":1,"exp":"Interest rates and budget pressures are Economic factors in the PESTLE model, influencing the resources available across the four dimensions."},{"id":63,"topic":"4d","diff":"recall","q":"Workflows, controls, and procedures needed to achieve agreed objectives are defined within which dimension?","opts":["Value streams and processes","Organisations and people","Partners and suppliers","Information and technology"],"a":0,"exp":"The 'value streams and processes' dimension addresses how the organisation arranges its activities, workflows, controls, and procedures to deliver agreed value efficiently."},{"id":64,"topic":"4d","diff":"application","q":"A service team has skilled people, good tools, and reliable suppliers, but work is uncoordinated with no clear workflow, causing delays. Which dimension needs attention?","opts":["Information and technology","Partners and suppliers","Value streams and processes","Organisations and people"],"a":2,"exp":"The lack of coordinated workflow and clear activities points to the 'value streams and processes' dimension, which governs how work is structured to create value."},{"id":65,"topic":"svs","diff":"recall","q":"What is the purpose of the ITIL service value system (SVS)?","opts":["To describe how all the components and activities of the organisation work together to enable value creation","To define the contractual terms with suppliers","To list the 34 management practices","To replace the four dimensions"],"a":0,"exp":"The SVS describes how all the components and activities of an organisation work together as a system to enable value creation through IT-enabled services."},{"id":66,"topic":"svs","diff":"recall","q":"Which of the following is a component of the ITIL service value system?","opts":["The PESTLE model","Governance","The DIKW hierarchy","The service request catalogue"],"a":1,"exp":"The SVS comprises: guiding principles, governance, the service value chain, practices, and continual improvement. Governance is a key component."},{"id":67,"topic":"svs","diff":"recall","q":"What are the inputs to the service value system?","opts":["Value and outcomes","Opportunity and demand","Cost and risk","Utility and warranty"],"a":1,"exp":"The inputs to the SVS are opportunity and demand. The output is value. Opportunity represents options to add value; demand is the need or desire for products and services."},{"id":68,"topic":"svs","diff":"recall","q":"What is the output of the service value system?","opts":["Demand","Value","Opportunity","Resources"],"a":1,"exp":"The SVS takes opportunity and demand as inputs and produces value as its output, through the interaction of its components and activities."},{"id":69,"topic":"svs","diff":"recall","q":"The central element of the service value system that converts demand into value through service creation is known as the:","opts":["Service value chain","Continual improvement register","Change schedule","Configuration management system"],"a":0,"exp":"The service value chain is the central operating model of the SVS. It is a set of interconnected activities that an organisation performs to deliver a valuable product or service."},{"id":70,"topic":"svs","diff":"recall","q":"How many activities make up the service value chain?","opts":["Four","Five","Six","Seven"],"a":2,"exp":"The service value chain has six activities: plan; improve; engage; design and transition; obtain/build; and deliver and support."},{"id":71,"topic":"svs","diff":"recall","q":"Which of the following is a value chain activity?","opts":["Engage","Govern","Optimise","Sponsor"],"a":0,"exp":"The six value chain activities are plan, improve, engage, design and transition, obtain/build, and deliver and support. 'Engage' is one of them."},{"id":72,"topic":"svs","diff":"application","q":"Which value chain activity is primarily responsible for providing a good understanding of stakeholder needs, transparency, and ongoing relationships with stakeholders?","opts":["Plan","Engage","Improve","Deliver and support"],"a":1,"exp":"The 'engage' activity provides understanding of stakeholder needs, transparency, and continual engagement and good relationships with all stakeholders, including customers, users, suppliers, and partners."},{"id":73,"topic":"svs","diff":"application","q":"Which value chain activity ensures products and services continually meet stakeholder expectations for quality, costs, and time to market?","opts":["Plan","Improve","Obtain/build","Design and transition"],"a":3,"exp":"'Design and transition' ensures products and services continually meet stakeholder expectations for quality, costs, and time to market."},{"id":74,"topic":"svs","diff":"recall","q":"Which value chain activity ensures a shared understanding of the vision, current status, and improvement direction for all four dimensions and all products and services?","opts":["Plan","Engage","Deliver and support","Obtain/build"],"a":0,"exp":"The 'plan' activity ensures a shared understanding of the vision, current status, and improvement direction for the four dimensions and all products and services across the organisation."},{"id":75,"topic":"svs","diff":"application","q":"A service desk resolving user incidents and fulfilling requests is most associated with which value chain activity?","opts":["Engage","Obtain/build","Deliver and support","Design and transition"],"a":2,"exp":"'Deliver and support' ensures services are delivered and supported according to agreed specifications and stakeholder expectations — the activity most associated with ongoing operational support."},{"id":76,"topic":"svs","diff":"recall","q":"Which value chain activity ensures service components are available when and where needed and meet agreed specifications?","opts":["Obtain/build","Plan","Improve","Engage"],"a":0,"exp":"'Obtain/build' ensures that service components are available when and where they are needed, and that they meet agreed specifications."},{"id":77,"topic":"svs","diff":"recall","q":"Which value chain activity exists to ensure continual improvement of products, services, and practices across all value chain activities and the four dimensions?","opts":["Plan","Improve","Engage","Deliver and support"],"a":1,"exp":"The 'improve' activity ensures continual improvement of products, services, and practices across all the value chain activities and the four dimensions of service management."},{"id":78,"topic":"svs","diff":"recall","q":"Within the SVS, what is the role of governance?","opts":["To perform incident resolution","The means by which an organisation is directed and controlled","To build service components","To engage with users"],"a":1,"exp":"Governance is the means by which an organisation is directed and controlled. In the SVS it directs and oversees activities to ensure they align with the organisation's strategy and policies."},{"id":79,"topic":"svs","diff":"recall","q":"In ITIL 4, the term 'practice' is defined as:","opts":["A set of organisational resources designed for performing work or accomplishing an objective","A contractual agreement with a supplier","A value chain activity","An external factor influencing the organisation"],"a":0,"exp":"A practice is a set of organisational resources designed for performing work or accomplishing an objective. ITIL 4 defines 34 practices grouped into general management, service management, and technical management categories."},{"id":80,"topic":"svs","diff":"recall","q":"How are the 34 ITIL practices categorised?","opts":["Strategic, tactical, and operational","General management, service management, and technical management","Internal, external, and hybrid","Plan, build, and run"],"a":1,"exp":"The 34 practices are grouped into general management practices (14), service management practices (17), and technical management practices (3)."},{"id":81,"topic":"svs","diff":"application","q":"The value chain activities can be combined in many different sequences to respond to different scenarios. What are these specific combinations called?","opts":["Value streams","Processes","Practices","Workflows"],"a":0,"exp":"A value stream is a series of steps an organisation undertakes to create and deliver products and services. Value chain activities are combined into value streams tailored to particular scenarios."},{"id":82,"topic":"svs","diff":"recall","q":"How many steps are in the ITIL continual improvement model?","opts":["Five","Six","Seven","Four"],"a":2,"exp":"The continual improvement model has seven steps, beginning with 'What is the vision?' and ending with 'How do we keep the momentum going?'"},{"id":83,"topic":"svs","diff":"recall","q":"What is the first step of the continual improvement model?","opts":["Where are we now?","What is the vision?","Take action","Did we get there?"],"a":1,"exp":"The first step is 'What is the vision?', which links the improvement to the organisation's vision and high-level direction before any assessment of the current state."},{"id":84,"topic":"svs","diff":"application","q":"In the continual improvement model, baselining the current state by taking measurements corresponds to which step?","opts":["What is the vision?","Where are we now?","Take action","How do we get there?"],"a":1,"exp":"'Where are we now?' involves assessing and measuring the current state to establish an objective baseline, consistent with the 'start where you are' guiding principle."},{"id":85,"topic":"svs","diff":"recall","q":"Which step of the continual improvement model is concerned with confirming that the improvement achieved its intended results?","opts":["Take action","Did we get there?","Where do we want to be?","How do we get there?"],"a":1,"exp":"'Did we get there?' verifies, through measurement, whether the targets set earlier were met and the improvement delivered the expected value."},{"id":86,"topic":"svs","diff":"application","q":"After successfully implementing an improvement, a team embeds the change into normal work so gains are not lost. This matches which continual improvement step?","opts":["Take action","Did we get there?","How do we keep the momentum going?","What is the vision?"],"a":2,"exp":"'How do we keep the momentum going?' focuses on embedding and sustaining improvements, marketing successes, and reinforcing new methods so that gains are not lost."},{"id":87,"topic":"svs","diff":"recall","q":"Which ITIL component is used to track and manage improvement ideas across the organisation?","opts":["The change schedule","The continual improvement register (CIR)","The known error database","The service catalogue"],"a":1,"exp":"A continual improvement register (CIR) is a database or structured document used to track and manage improvement ideas from identification through to action."},{"id":88,"topic":"pr","diff":"recall","q":"What is the purpose of the incident management practice?","opts":["To minimise the negative impact of incidents by restoring normal service operation as quickly as possible","To reduce the likelihood and impact of incidents by finding their causes","To authorise and schedule changes","To handle predefined user requests"],"a":0,"exp":"Incident management aims to minimise the negative impact of incidents by restoring normal service operation as quickly as possible. (Finding causes is problem management.)"},{"id":89,"topic":"pr","diff":"recall","q":"How does ITIL 4 define an incident?","opts":["A cause, or potential cause, of one or more interruptions","An unplanned interruption to a service, or reduction in the quality of a service","Any change of state significant for managing a service","A planned addition of a new service"],"a":1,"exp":"An incident is an unplanned interruption to a service, or a reduction in the quality of a service. Restoring service quickly is the goal of incident management."},{"id":90,"topic":"pr","diff":"recall","q":"What is the purpose of the problem management practice?","opts":["To restore normal service operation as quickly as possible","To reduce the likelihood and impact of incidents by identifying actual and potential causes, and managing workarounds and known errors","To handle all user-initiated service requests","To set service level targets"],"a":1,"exp":"Problem management reduces the likelihood and impact of incidents by identifying actual and potential causes of incidents and managing workarounds and known errors."},{"id":91,"topic":"pr","diff":"recall","q":"In ITIL 4, a problem is defined as:","opts":["An unplanned interruption to a service","A cause, or potential cause, of one or more incidents","A problem that has been analysed but not resolved","A predefined request from a user"],"a":1,"exp":"A problem is a cause, or potential cause, of one or more incidents. A known error is a problem that has been analysed and has not yet been resolved."},{"id":92,"topic":"pr","diff":"recall","q":"What is a known error?","opts":["An incident with no known cause","A problem that has been analysed but has not been resolved","A change that failed during deployment","A service request that was rejected"],"a":1,"exp":"A known error is a problem that has been analysed but has not been resolved. It is often associated with a documented workaround."},{"id":93,"topic":"pr","diff":"application","q":"Users repeatedly hit the same fault. A documented temporary fix lets them keep working while the underlying cause is investigated. What is this temporary fix called?","opts":["A known error","A workaround","A standard change","An emergency change"],"a":1,"exp":"A workaround is a solution that reduces or eliminates the impact of an incident or problem for which a full resolution is not yet available. Workarounds for problems become part of known error records."},{"id":94,"topic":"pr","diff":"recall","q":"What is the purpose of the change enablement practice?","opts":["To maximise the number of successful service and product changes by ensuring risks are properly assessed, authorising changes, and managing the change schedule","To restore service after an incident","To handle service requests","To detect events across the infrastructure"],"a":0,"exp":"Change enablement aims to maximise the number of successful service and product changes by ensuring risks are properly assessed, authorising changes to proceed, and managing the change schedule."},{"id":95,"topic":"pr","diff":"recall","q":"Which three types of change does change enablement recognise?","opts":["Standard, normal, and emergency","Minor, major, and critical","Pre-approved, scheduled, and rejected","Planned, unplanned, and reactive"],"a":0,"exp":"Change enablement recognises three change types: standard (pre-authorised, low risk), normal (assessed and authorised through a process), and emergency (must be implemented as soon as possible)."},{"id":96,"topic":"pr","diff":"application","q":"A low-risk, well-understood password reset has been pre-authorised and follows a documented procedure each time. Which change type is this?","opts":["Normal change","Emergency change","Standard change","Major change"],"a":2,"exp":"A standard change is low-risk, pre-authorised, well understood, and follows an established procedure. It does not need separate authorisation each time it is performed."},{"id":97,"topic":"pr","diff":"application","q":"A critical security vulnerability must be patched immediately to prevent a breach. Which change type applies?","opts":["Standard change","Normal change","Emergency change","Pre-authorised change"],"a":2,"exp":"An emergency change must be implemented as soon as possible, for example to resolve a major incident or apply an urgent security patch. It typically has an expedited assessment and authorisation."},{"id":98,"topic":"pr","diff":"recall","q":"The person or group that authorises a change is known as the:","opts":["Change authority","Service owner","Sponsor","Problem manager"],"a":0,"exp":"A change authority is the person or group responsible for authorising a change. The change authority should be appropriate to the type, size, and risk of the change."},{"id":99,"topic":"pr","diff":"recall","q":"What is the purpose of the service request management practice?","opts":["To support the agreed quality of a service by handling all predefined, user-initiated service requests effectively and user-friendly","To restore service after unplanned interruptions","To identify the causes of incidents","To assess and authorise changes"],"a":0,"exp":"Service request management supports the agreed quality of a service by handling all predefined, user-initiated service requests in an effective and user-friendly manner."},{"id":100,"topic":"pr","diff":"application","q":"A user asks for access to an application they are entitled to, using a normal, low-risk, predefined procedure. This is best handled as a:","opts":["Incident","Problem","Service request","Emergency change"],"a":2,"exp":"This is a service request — a predefined, user-initiated request that is a normal part of service delivery (such as standard access provisioning), handled by service request management."},{"id":101,"topic":"pr","diff":"recall","q":"What is the purpose of the service desk practice?","opts":["To capture demand for incident resolution and service requests, acting as the point of communication between the provider and its users","To authorise changes","To manage supplier contracts","To design new services"],"a":0,"exp":"The service desk practice captures demand for incident resolution and service requests, and serves as the single point of communication and engagement between the service provider and its users."},{"id":102,"topic":"pr","diff":"recall","q":"A key role of the service desk is to provide which of the following?","opts":["Root cause analysis of all problems","A clear path for users to report issues, ask questions, and make requests, with acknowledgement and tracking","Authorisation for emergency changes","The configuration management database"],"a":1,"exp":"The service desk provides a clear, single point of contact where users can report issues, ask questions, and make requests, with those interactions acknowledged, classified, owned, and tracked."},{"id":103,"topic":"pr","diff":"recall","q":"What is the purpose of the service level management practice?","opts":["To set clear business-based targets for service performance so delivery can be assessed, monitored, and managed against those targets","To resolve incidents quickly","To manage the deployment of new components","To identify problems"],"a":0,"exp":"Service level management sets clear, business-based targets for service levels and ensures that service delivery is properly assessed, monitored, and managed against those targets."},{"id":104,"topic":"pr","diff":"recall","q":"A documented agreement between a service provider and a customer that identifies services and service targets is a:","opts":["Service level agreement (SLA)","Known error record","Change schedule","Continual improvement register"],"a":0,"exp":"A service level agreement (SLA) is a documented agreement between a service provider and a customer that identifies both the services required and the expected level of service."},{"id":105,"topic":"pr","diff":"application","q":"An SLA states '99.9% availability' but users are deeply dissatisfied with the service despite the target being met. ITIL 4 describes this gap using which term?","opts":["A workaround","The watermelon effect","A known error","A standard change"],"a":1,"exp":"The 'watermelon SLA' or watermelon effect describes a service that looks green (meeting metrics) on the outside but is red (failing the customer's actual experience) on the inside — a warning against metrics divorced from real value."},{"id":106,"topic":"pr","diff":"recall","q":"What is the purpose of the continual improvement practice?","opts":["To align the organisation's practices and services with changing business needs through ongoing improvement","To restore normal service operation after incidents","To handle predefined service requests","To authorise and schedule all changes"],"a":0,"exp":"The continual improvement practice aligns the organisation's practices and services with changing business needs through the ongoing identification and improvement of services, components, and practices."},{"id":107,"topic":"pr","diff":"recall","q":"Which of the following is a general management practice?","opts":["Incident management","Service desk","Risk management","Deployment management"],"a":2,"exp":"Risk management is a general management practice. Incident management and service desk are service management practices; deployment management is a technical management practice."},{"id":108,"topic":"pr","diff":"recall","q":"Which of the following is a technical management practice?","opts":["Deployment management","Change enablement","Service level management","Problem management"],"a":0,"exp":"Deployment management is one of the three technical management practices (along with infrastructure and platform management, and software development and management). The others listed are service management practices."},{"id":109,"topic":"pr","diff":"application","q":"An organisation wants to reduce repeat incidents caused by the same underlying fault. Which practice is most relevant?","opts":["Incident management","Problem management","Service request management","Service desk"],"a":1,"exp":"Reducing repeat incidents by addressing underlying causes is the focus of problem management, which identifies and manages causes of incidents, workarounds, and known errors."},{"id":110,"topic":"pr","diff":"recall","q":"What is the relationship between incident management and problem management?","opts":["They are the same practice under different names","Incident management restores service; problem management addresses underlying causes to prevent recurrence","Problem management restores service; incident management prevents recurrence","Neither deals with service restoration"],"a":1,"exp":"Incident management focuses on restoring normal service operation as quickly as possible; problem management focuses on identifying and removing the underlying causes so incidents do not recur."},{"id":111,"topic":"pr","diff":"recall","q":"What is the purpose of the monitoring and event management practice?","opts":["To systematically observe services and components, and record and report selected changes of state identified as events","To restore service after incidents","To manage workarounds and known errors","To authorise changes"],"a":0,"exp":"Monitoring and event management systematically observes services and configuration items, and records and reports selected changes of state identified as events, determining the appropriate response."},{"id":112,"topic":"pr","diff":"recall","q":"In ITIL 4, an event is best defined as:","opts":["An unplanned interruption to a service","Any change of state that has significance for the management of a service or other configuration item","A cause of one or more incidents","A predefined user request"],"a":1,"exp":"An event is any change of state that has significance for the management of a service or other configuration item. Events are detected by monitoring and may be informational, warning, or exception events."},{"id":113,"topic":"pr","diff":"recall","q":"What is the purpose of the service configuration management practice?","opts":["To ensure accurate and reliable information about the configuration of services and the CIs that support them is available when and where needed","To handle service requests","To resolve incidents","To set service level targets"],"a":0,"exp":"Service configuration management ensures that accurate and reliable information about the configuration of services, and the configuration items (CIs) that support them, is available when and where it is needed."},{"id":114,"topic":"pr","diff":"recall","q":"A configuration item (CI) is best described as:","opts":["Any component that needs to be managed in order to deliver an IT service","A financially valuable component only","An unplanned interruption to a service","A documented agreement on service targets"],"a":0,"exp":"A configuration item (CI) is any component that needs to be managed in order to deliver an IT service. Information about CIs is recorded in a configuration management system."},{"id":115,"topic":"pr","diff":"application","q":"A change is assessed, scheduled, and authorised through the standard documented process — it is neither pre-authorised nor an emergency. Which change type is it?","opts":["Standard change","Normal change","Emergency change","Service request"],"a":1,"exp":"A normal change is one that must be scheduled, assessed, and authorised following a standard process. It sits between standard (pre-authorised) and emergency (expedited) changes."},{"id":116,"topic":"pr","diff":"recall","q":"What does the relationship management practice aim to do?","opts":["Establish and nurture links between the organisation and its stakeholders at strategic and tactical levels","Resolve incidents within agreed timescales","Test new releases before deployment","Build the service components"],"a":0,"exp":"Relationship management establishes and nurtures the links between the organisation and its stakeholders at strategic and tactical levels, including identifying, analysing, monitoring, and improving relationships."},{"id":117,"topic":"pr","diff":"recall","q":"What is the purpose of the supplier management practice?","opts":["To ensure suppliers and their performance are managed appropriately to support seamless quality products and services","To resolve incidents","To capture demand for service requests","To manage the change schedule"],"a":0,"exp":"Supplier management ensures that the organisation's suppliers and their performance are managed appropriately to support the seamless provision of quality products and services."},{"id":118,"topic":"pr","diff":"application","q":"A major incident is declared. To restore service fast, a high-risk fix must be deployed in minutes. Which TWO practices most directly interact here?","opts":["Incident management and change enablement","Service desk and supplier management","Problem management and service level management","Service request management and monitoring and event management"],"a":0,"exp":"Restoring service after a major incident is incident management; the urgent fix is an emergency change handled through change enablement. The two practices coordinate closely during major incidents."},{"id":119,"topic":"pr","diff":"recall","q":"What is the purpose of the IT asset management practice?","opts":["To plan and manage the full lifecycle of all IT assets to maximise value, control costs, manage risks, and support decision-making","To restore normal service operation","To handle predefined service requests","To detect events"],"a":0,"exp":"IT asset management plans and manages the full lifecycle of all IT assets, helping the organisation maximise value, control costs, manage risks, support decisions about reuse and retirement, and meet regulatory requirements."},{"id":120,"topic":"pr","diff":"recall","q":"What is the purpose of the deployment management practice?","opts":["To move new or changed hardware, software, documentation, or processes to live environments","To set service level targets","To analyse problems","To engage stakeholders"],"a":0,"exp":"Deployment management moves new or changed hardware, software, documentation, processes, or any other component to live (or test) environments. It works closely with release and change practices."}];
+</script>
+<script>
+/* ============================================================
+   ITIL 4 Foundation Practice — application logic
+   QUESTIONS is injected as a global before this script runs.
+   ============================================================ */
+(function(){
+  "use strict";
+
+  const TOPICS = {
+    kc:  {name:"Key Concepts",        css:"var(--kc)"},
+    gp:  {name:"Guiding Principles",  css:"var(--gp)"},
+    "4d":{name:"Four Dimensions",     css:"var(--4d)"},
+    svs: {name:"SVS & Value Chain",   css:"var(--svs)"},
+    pr:  {name:"Practices",           css:"var(--pr)"}
+  };
+  const TOPIC_ORDER = ["kc","gp","4d","svs","pr"];
+
+  // Official ITIL 4 Foundation exam weighting (questions out of 40)
+  const EXAM_WEIGHT = {kc:7, gp:9, "4d":4, svs:7, pr:13};
+  const EXAM_TOTAL  = 40;
+  const EXAM_SECONDS = 60*60;     // 60 minutes
+  const PASS_PCT = 65;            // 26/40
+
+  const app = document.getElementById("app");
+
+  // session config
+  let cfg = {
+    mode: "study",                 // study | exam | drill
+    topics: {kc:true,gp:true,"4d":true,svs:true,pr:true},
+    drillTopic: "gp",
+    length: 20
+  };
+
+  // active run state
+  let run = null;
+  let timerId = null;
+
+  /* ── helpers ─────────────────────────────────────────────── */
+  function shuffle(a){
+    a = a.slice();
+    for(let i=a.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+    return a;
+  }
+  function byTopic(t){ return QUESTIONS.filter(q=>q.topic===t); }
+  function fmtTime(s){
+    const m=Math.floor(s/60), ss=s%60;
+    return m+":"+String(ss).padStart(2,"0");
+  }
+  const KEYS=["A","B","C","D"];
+
+  /* ── build a question set, with reshuffled options ───────── */
+  function prepQuestion(q){
+    // reshuffle option order, track new index of correct answer
+    const order = shuffle([0,1,2,3]);
+    const opts = order.map(i=>q.opts[i]);
+    const ans  = order.indexOf(q.a);
+    return {ref:q, opts, ans, picked:null, flagged:false};
+  }
+
+  function buildSet(){
+    if(cfg.mode==="exam"){
+      // official weighting across all topics
+      let set=[];
+      TOPIC_ORDER.forEach(t=>{
+        const pool=shuffle(byTopic(t));
+        set=set.concat(pool.slice(0, Math.min(EXAM_WEIGHT[t], pool.length)));
+      });
+      // top up to EXAM_TOTAL if any pool was short
+      if(set.length<EXAM_TOTAL){
+        const used=new Set(set.map(q=>q.id));
+        const extra=shuffle(QUESTIONS.filter(q=>!used.has(q.id)));
+        set=set.concat(extra.slice(0, EXAM_TOTAL-set.length));
+      }
+      return shuffle(set).map(prepQuestion);
+    }
+    if(cfg.mode==="drill"){
+      const pool=shuffle(byTopic(cfg.drillTopic));
+      const n = cfg.length==="all" ? pool.length : Math.min(cfg.length, pool.length);
+      return pool.slice(0,n).map(prepQuestion);
+    }
+    // study
+    const enabled=TOPIC_ORDER.filter(t=>cfg.topics[t]);
+    let pool=shuffle(QUESTIONS.filter(q=>enabled.includes(q.topic)));
+    const n = cfg.length==="all" ? pool.length : Math.min(cfg.length, pool.length);
+    return pool.slice(0,n).map(prepQuestion);
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     CONFIG SCREEN
+     ════════════════════════════════════════════════════════════ */
+  function renderConfig(){
+    clearTimer();
+    const isExam = cfg.mode==="exam";
+    const isDrill= cfg.mode==="drill";
+
+    const modeCard=(id,name,desc)=>`
+      <div class="mode ${cfg.mode===id?'sel':''}" data-mode="${id}">
+        <div class="mname">${name}</div>
+        <div class="mdesc">${desc}</div>
+      </div>`;
+
+    // topic toggles (study) or single-select (drill)
+    let topicBlock="";
+    if(isDrill){
+      topicBlock = `<div class="section-h">Topic — pick one to drill</div>
+        <div class="toggles">` +
+        TOPIC_ORDER.map(t=>`
+          <div class="toggle ${cfg.drillTopic===t?'':'off'}" data-drill="${t}">
+            <span class="swatch" style="background:${TOPICS[t].css}"></span>
+            <span class="check">●</span>
+            ${TOPICS[t].name} <span style="color:var(--muted)">(${byTopic(t).length})</span>
+          </div>`).join("") + `</div>`;
+    } else {
+      const lockCls = isExam ? "locked" : "";
+      topicBlock = `<div class="section-h">Topics ${isExam?'— fixed for exam simulation':''}</div>
+        <div class="toggles">` +
+        TOPIC_ORDER.map(t=>{
+          const on = isExam ? true : cfg.topics[t];
+          return `<div class="toggle ${on?'':'off'} ${lockCls}" data-topic="${t}">
+            <span class="swatch" style="background:${TOPICS[t].css}"></span>
+            <span class="check">●</span>
+            ${TOPICS[t].name} <span style="color:var(--muted)">(${byTopic(t).length})</span>
+          </div>`;
+        }).join("") + `</div>`;
+    }
+
+    // length selector — hidden in exam mode (fixed 40)
+    let lengthBlock="";
+    if(!isExam){
+      const opts = isDrill
+        ? [10,20,"all"]
+        : [10,20,40,"all"];
+      lengthBlock = `<div class="section-h">Length</div>
+        <div class="lengths">` +
+        opts.map(v=>`<div class="len ${cfg.length===v?'sel':''}" data-len="${v}">${v==="all"?"All":v}</div>`).join("")
+        + `</div>`;
+    }
+
+    // contextual note
+    let note="";
+    if(isExam){
+      note=`<div class="note"><b>Exam simulation:</b> 40 questions drawn using the official Foundation
+        weighting (Key Concepts 7 · Guiding Principles 9 · Four Dimensions 4 · SVS 7 · Practices 13),
+        a 60-minute countdown, and <b>no feedback until the end</b>. Pass mark is ${PASS_PCT}% (26/40).</div>`;
+    } else if(isDrill){
+      note=`<div class="note">Drill a single topic with instant feedback after every question. No timer pressure.</div>`;
+    } else {
+      note=`<div class="note">Study mode gives instant feedback and explanations after each answer.
+        Choosing <b>40</b> with all topics on applies the real exam weighting; otherwise it's a random sample of your selection.</div>`;
+    }
+
+    // can we start?
+    const enabledCount = TOPIC_ORDER.filter(t=>cfg.topics[t]).length;
+    const canStart = isExam || isDrill || enabledCount>0;
+
+    app.innerHTML = `
+      <div class="card">
+        <h2 class="screen-title">Configure your session</h2>
+        <div class="sub">itil4-foundation · 010 · ${QUESTIONS.length}-question bank</div>
+
+        <div class="section-h">Mode</div>
+        <div class="modes">
+          ${modeCard("study","Study","Instant feedback + explanations. Pick topics & length.")}
+          ${modeCard("exam","Exam Sim","40 Q · 60-min timer · graded at the end.")}
+          ${modeCard("drill","Topic Drill","Hammer one topic with instant feedback.")}
+        </div>
+
+        ${topicBlock}
+        ${lengthBlock}
+        ${note}
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="start" ${canStart?'':'disabled'}>start session →</button>
+          <span class="hint">${enabledCount===0 && !isExam && !isDrill ? 'select at least one topic' : ''}</span>
+        </div>
+      </div>`;
+
+    // wire events
+    app.querySelectorAll(".mode").forEach(el=>{
+      el.onclick=()=>{ cfg.mode=el.dataset.mode;
+        if(cfg.mode==="drill" && cfg.length===40) cfg.length=20;
+        renderConfig(); };
+    });
+    if(!isExam && !isDrill){
+      app.querySelectorAll("[data-topic]").forEach(el=>{
+        el.onclick=()=>{ const t=el.dataset.topic; cfg.topics[t]=!cfg.topics[t]; renderConfig(); };
+      });
+    }
+    if(isDrill){
+      app.querySelectorAll("[data-drill]").forEach(el=>{
+        el.onclick=()=>{ cfg.drillTopic=el.dataset.drill; renderConfig(); };
+      });
+    }
+    app.querySelectorAll("[data-len]").forEach(el=>{
+      el.onclick=()=>{ const v=el.dataset.len; cfg.length = v==="all"?"all":parseInt(v,10); renderConfig(); };
+    });
+    const startBtn=document.getElementById("start");
+    if(startBtn && canStart) startBtn.onclick=startRun;
+  }
+
+  /* ════════════════════════════════════════════════════════════
+     RUN
+     ════════════════════════════════════════════════════════════ */
+  function startRun(){
+    const set=buildSet();
+    run={
+      set, i:0, correct:0,
+      instant: cfg.mode!=="exam",
+      startedAt: Date.now(),
+      remaining: EXAM_SECONDS,
+      mode: cfg.mode,
+      done:false
+    };
+    if(cfg.mode==="exam") startCountdown();
+    else startCountup();
+    renderQuestion();
+  }
+
+  function clearTimer(){ if(timerId){clearInterval(timerId);timerId=null;} }
+
+  function startCountup(){
+    clearTimer();
+    timerId=setInterval(()=>{ updateHud(); }, 1000);
+  }
+  function startCountdown(){
+    clearTimer();
+    timerId=setInterval(()=>{
+      run.remaining--;
+      if(run.remaining<=0){ run.remaining=0; updateHud(); finish(true); }
+      else updateHud();
+    },1000);
+  }
+
+  function elapsed(){ return Math.floor((Date.now()-run.startedAt)/1000); }
+
+  function updateHud(){
+    const t=document.getElementById("timer");
+    if(t){
+      if(run.mode==="exam"){
+        t.textContent=fmtTime(run.remaining);
+        t.classList.toggle("danger", run.remaining<=120);
+      } else {
+        t.textContent=fmtTime(elapsed());
+      }
+    }
+  }
+
+  function renderQuestion(){
+    const cur=run.set[run.i];
+    const q=cur.ref;
+    const total=run.set.length;
+    const answered = run.set.slice(0,run.i).filter(x=>x.picked!==null).length;
+    const acc = answered? Math.round(run.correct/answered*100):0;
+    const pct = Math.round(run.i/total*100);
+
+    const tagColour=TOPICS[q.topic].css;
+    const flagCount=run.set.filter(x=>x.flagged).length;
+
+    app.innerHTML=`
+      <div class="card">
+        <div class="hud">
+          <span class="item"><span class="lbl">Q</span>
+            <span class="val accent">${run.i+1}</span><span class="lbl">/ ${total}</span></span>
+          ${run.instant?`<span class="item"><span class="lbl">score</span>
+            <span class="val">${run.correct}/${answered}</span></span>
+          <span class="item"><span class="lbl">acc</span><span class="val">${acc}%</span></span>`:''}
+          <span class="item" id="flagCount" style="${flagCount?'':'display:none'}"><span class="lbl">flagged</span>
+            <span class="val" style="color:var(--warn)">⚑ ${flagCount}</span></span>
+          <span class="item right"><span class="lbl">${run.mode==="exam"?'time left':'elapsed'}</span>
+            <span class="val timer" id="timer">${run.mode==="exam"?fmtTime(run.remaining):fmtTime(elapsed())}</span></span>
+        </div>
+        <div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
+
+        <div class="q-tags">
+          <span class="tag" style="color:${tagColour};border-color:${tagColour}">${TOPICS[q.topic].name}</span>
+          <span class="tag diff">${q.diff}</span>
+          <button class="flagbtn ${cur.flagged?'on':''}" id="flagBtn" title="Flag for review (F)">
+            <span class="fico">⚑</span><span class="ftxt">${cur.flagged?'flagged':'flag'}</span>
+          </button>
+        </div>
+        <div class="q-text">${q.q}</div>
+        <div class="options" id="opts">
+          ${cur.opts.map((o,idx)=>`
+            <button class="opt" data-idx="${idx}">
+              <span class="key">${KEYS[idx]}</span>
+              <span class="otext">${o}</span>
+              <span class="mark"></span>
+            </button>`).join("")}
+        </div>
+        <div id="explainHost"></div>
+        <div class="q-foot" id="foot"></div>
+      </div>`;
+
+    const optsEl=document.getElementById("opts");
+    optsEl.querySelectorAll(".opt").forEach(b=>{
+      b.onclick=()=>choose(parseInt(b.dataset.idx,10));
+    });
+
+    const flagBtn=document.getElementById("flagBtn");
+    if(flagBtn) flagBtn.onclick=toggleFlag;
+
+    // exam mode: pre-highlight a previously chosen answer + show nav now
+    if(!run.instant){
+      if(cur.picked!==null){
+        const b=optsEl.querySelector(`[data-idx="${cur.picked}"]`);
+        if(b) b.classList.add("picked-exam");
+      }
+      renderExamFoot();
+    }
+    updateHud();
+  }
+
+  /* ── flag for review ─────────────────────────────────────── */
+  function toggleFlag(){
+    const cur=run.set[run.i];
+    cur.flagged=!cur.flagged;
+    const btn=document.getElementById("flagBtn");
+    if(btn){
+      btn.classList.toggle("on", cur.flagged);
+      btn.querySelector(".ftxt").textContent=cur.flagged?"flagged":"flag";
+    }
+    const fc=run.set.filter(x=>x.flagged).length;
+    const host=document.getElementById("flagCount");
+    if(host){
+      host.style.display = fc? "" : "none";
+      host.querySelector(".val").textContent="⚑ "+fc;
+    }
+  }
+
+  /* ── choose an answer ────────────────────────────────────── */
+  function choose(idx){
+    const cur=run.set[run.i];
+
+    if(run.instant){
+      if(cur.picked!==null) return;           // lock after first answer
+      cur.picked=idx;
+      const right = idx===cur.ans;
+      if(right) run.correct++;
+
+      const optsEl=document.getElementById("opts");
+      optsEl.querySelectorAll(".opt").forEach(b=>{
+        const bi=parseInt(b.dataset.idx,10);
+        b.classList.add("locked");
+        if(bi===cur.ans){ b.classList.add("correct"); b.querySelector(".mark").textContent="✓"; }
+        if(bi===idx && !right){ b.classList.add("wrong"); b.querySelector(".mark").textContent="✗"; }
+      });
+
+      document.getElementById("explainHost").innerHTML=`
+        <div class="explain ${right?'ok':'no'}">
+          <span class="verdict">${right?'✓ correct':'✗ incorrect'}</span>
+          ${cur.ref.exp}
+        </div>`;
+      renderInstantFoot();
+      updateHud();
+    } else {
+      // exam mode: toggle selection, no feedback
+      cur.picked = (cur.picked===idx? null : idx);
+      const optsEl=document.getElementById("opts");
+      optsEl.querySelectorAll(".opt").forEach(b=>{
+        b.classList.toggle("picked-exam", parseInt(b.dataset.idx,10)===cur.picked);
+      });
+      renderExamFoot();
+    }
+  }
+
+  function renderInstantFoot(){
+    const last = run.i===run.set.length-1;
+    document.getElementById("foot").innerHTML=`
+      <button class="btn btn-primary" id="next">${last?'see results →':'next →'}</button>
+      <span class="hint"><kbd>Enter</kbd> continue · <kbd>F</kbd> flag</span>`;
+    document.getElementById("next").onclick=advance;
+  }
+
+  function renderExamFoot(){
+    const last = run.i===run.set.length-1;
+    const cur=run.set[run.i];
+    document.getElementById("foot").innerHTML=`
+      ${run.i>0?`<button class="btn btn-ghost" id="prev">← back</button>`:''}
+      <button class="btn btn-primary" id="next">${last?'finish & grade →':'next →'}</button>
+      <span class="hint">${cur.picked===null?'unanswered · ':''}<kbd>1-4</kbd> select · <kbd>F</kbd> flag · <kbd>Enter</kbd> next</span>`;
+    document.getElementById("next").onclick=()=>{ last? finish(false): advance(); };
+    const p=document.getElementById("prev");
+    if(p) p.onclick=back;
+  }
+
+  function advance(){
+    if(run.i<run.set.length-1){ run.i++; renderQuestion(); }
+    else finish(false);
+  }
+  function back(){ if(run.i>0){ run.i--; renderQuestion(); } }
+
+  /* ── keyboard ───────────────────────────────────────────── */
+  document.addEventListener("keydown",e=>{
+    if(!run || run.done) return;
+    const k=e.key.toLowerCase();
+    if(["1","2","3","4"].includes(k)){ choose(parseInt(k,10)-1); e.preventDefault(); }
+    else if(["a","b","c","d"].includes(k)){ choose("abcd".indexOf(k)); e.preventDefault(); }
+    else if(k==="f"){ toggleFlag(); e.preventDefault(); }
+    else if(e.key==="Enter"){
+      const cur=run.set[run.i];
+      if(run.instant){ if(cur.picked!==null) advance(); }
+      else { (run.i===run.set.length-1)? finish(false): advance(); }
+      e.preventDefault();
+    }
+    else if(e.key==="ArrowLeft" && !run.instant){ back(); }
+  });
+
+  /* ════════════════════════════════════════════════════════════
+     FINISH + RESULTS
+     ════════════════════════════════════════════════════════════ */
+  function finish(timedOut){
+    clearTimer();
+    run.done=true;
+    // grade exam mode (deferred)
+    if(!run.instant){
+      run.correct=run.set.filter(x=>x.picked!==null && x.picked===x.ans).length;
+    }
+    renderResults(timedOut);
+  }
+
+  function renderResults(timedOut){
+    const set=run.set;
+    const answered=set.filter(x=>x.picked!==null).length;
+    const total=set.length;
+    const correct=set.filter(x=>x.picked!==null && x.picked===x.ans).length;
+    // score is over total questions (exam-style); accuracy is over answered
+    const scorePct=Math.round(correct/total*100);
+    const accPct = answered? Math.round(correct/answered*100):0;
+    const pass=scorePct>=PASS_PCT;
+    const secs=run.mode==="exam" ? (EXAM_SECONDS-run.remaining) : elapsed();
+    const flaggedTotal=set.filter(x=>x.flagged).length;
+
+    // per-topic breakdown — ONLY topics that actually appeared this run
+    const seen={};
+    set.forEach(x=>{
+      const t=x.ref.topic;
+      if(!seen[t]) seen[t]={n:0,c:0};
+      seen[t].n++;
+      if(x.picked!==null && x.picked===x.ans) seen[t].c++;
+    });
+    const topicsSeen=TOPIC_ORDER.filter(t=>seen[t]);
+
+    // weakest topic (lowest accuracy among those with >=2 questions)
+    let weak=null;
+    topicsSeen.forEach(t=>{
+      if(seen[t].n>=2){
+        const a=seen[t].c/seen[t].n;
+        if(weak===null || a<weak.a) weak={t,a,...seen[t]};
+      }
+    });
+
+    const breakdownRows = topicsSeen.map(t=>{
+      const s=seen[t];
+      const pc=Math.round(s.c/s.n*100);
+      return `<div class="trow">
+        <span class="tname"><span class="tswatch" style="background:${TOPICS[t].css}"></span>${TOPICS[t].name}</span>
+        <span class="tbar"><span class="fill" style="width:${pc}%;background:${TOPICS[t].css}"></span></span>
+        <span class="tnum">${s.c}/${s.n} · ${pc}%</span>
+      </div>`;
+    }).join("");
+
+    const examCounts = run.mode==="exam"
+      ? `<div class="note" style="margin-top:14px">Questions drawn this run: ` +
+        topicsSeen.map(t=>`${TOPICS[t].name.replace(' & Value Chain','')} ${seen[t].n}`).join(" · ") + `</div>`
+      : "";
+
+    app.innerHTML=`
+      <div class="card">
+        <div class="verdict-banner ${pass?'pass':'fail'}">
+          <div class="big">${pass?'✓ pass':'✗ below pass mark'}${timedOut?' · time expired':''}</div>
+          <div class="bigscore">${scorePct}%</div>
+          <div class="scoreline">${correct} / ${total} correct · pass mark ${PASS_PCT}%</div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat"><div class="n">${correct}/${total}</div><div class="l">score</div></div>
+          <div class="stat"><div class="n">${answered<total?accPct+'%':scorePct+'%'}</div><div class="l">${answered<total?'accuracy':'overall'}</div></div>
+          <div class="stat"><div class="n">${fmtTime(secs)}</div><div class="l">time</div></div>
+        </div>
+        ${answered<total?`<div class="note" style="margin-top:10px">${total-answered} question(s) left unanswered — counted as incorrect against the score.</div>`:''}
+
+        <div class="section-h">Breakdown by topic (this session)</div>
+        <div class="tbreak">${breakdownRows}</div>
+        ${examCounts}
+        ${weak?`<div class="weak">Weakest area this run: <b>${TOPICS[weak.t].name}</b>
+          at ${Math.round(weak.a*100)}% (${weak.c}/${weak.n}). Worth a Topic Drill.</div>`:''}
+
+        <div class="section-h">Review</div>
+        <div class="review-controls">
+          <button class="len sel" data-rev="all">All (${total})</button>
+          <button class="len" data-rev="wrong">Incorrect only (${total-correct})</button>
+          ${flaggedTotal?`<button class="len flagged-btn" data-rev="flagged"><span style="color:var(--warn)">⚑</span> Flagged (${flaggedTotal})</button>`:''}
+        </div>
+        <div id="reviewHost"></div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="again">new session →</button>
+          <button class="btn btn-ghost" id="retry">repeat same settings</button>
+        </div>
+      </div>`;
+
+    // bars animate from 0
+    requestAnimationFrame(()=>{
+      app.querySelectorAll(".tbar .fill").forEach(f=>{ const w=f.style.width; f.style.width="0%"; requestAnimationFrame(()=>f.style.width=w); });
+    });
+
+    let revMode="all";
+    const host=document.getElementById("reviewHost");
+    function renderReview(){
+      const items = set.map((x,n)=>({x,n})).filter(({x})=>{
+        if(revMode==="wrong")   return !(x.picked!==null && x.picked===x.ans);
+        if(revMode==="flagged") return x.flagged;
+        return true;
+      });
+      if(items.length===0){
+        const msg = revMode==="flagged" ? "No questions were flagged this run."
+                  : "Nothing to show — a clean sweep. ✓";
+        host.innerHTML=`<div class="note">${msg}</div>`; return;
+      }
+      host.innerHTML=items.map(({x,n})=>{
+        const q=x.ref;
+        const optHtml=x.opts.map((o,idx)=>{
+          let cls="";
+          if(idx===x.ans) cls="c";
+          else if(idx===x.picked) cls="w";
+          const tag = idx===x.ans ? " ✓ correct" : (idx===x.picked? " ✗ your pick":"");
+          return `<div class="rev-opt ${cls}"><span class="rk">${KEYS[idx]}</span><span>${o}${tag?`<span style="color:var(--muted);font-family:var(--mono);font-size:11px">${tag}</span>`:''}</span></div>`;
+        }).join("");
+        const unanswered = x.picked===null ? `<span style="color:var(--warn);font-family:var(--mono);font-size:11px"> · unanswered</span>`:"";
+        const flagBadge = x.flagged ? `<span class="tag" style="color:var(--warn);border-color:var(--warn)">⚑ flagged</span>`:"";
+        return `<div class="rev-item">
+          <div class="q-tags">
+            <span class="tag" style="color:${TOPICS[q.topic].css};border-color:${TOPICS[q.topic].css}">${TOPICS[q.topic].name}</span>
+            <span class="tag diff">Q${n+1}${unanswered? ' ·':''}</span>${unanswered}
+            ${flagBadge}
+          </div>
+          <div class="rev-q">${q.q}</div>
+          ${optHtml}
+          <div class="rev-exp">${q.exp}</div>
+        </div>`;
+      }).join("");
+    }
+    renderReview();
+    app.querySelectorAll("[data-rev]").forEach(b=>{
+      b.onclick=()=>{
+        app.querySelectorAll("[data-rev]").forEach(x=>x.classList.remove("sel"));
+        b.classList.add("sel"); revMode=b.dataset.rev; renderReview();
+      };
+    });
+
+    document.getElementById("again").onclick=()=>{ run=null; renderConfig(); };
+    document.getElementById("retry").onclick=()=>{ startRun(); };
+    run=null;  // allow keyboard handler to disengage; review buttons are direct
+  }
+
+  // boot
+  renderConfig();
+})();
+
+</script>
+</body>
+</html>
